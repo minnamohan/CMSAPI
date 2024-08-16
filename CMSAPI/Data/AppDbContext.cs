@@ -17,7 +17,7 @@ namespace CMSAPI.Data
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("data source=KCT-L-472\\SQLEXPRESS;initial catalog=CMSDB;user id=sa;Password=kalki@123;Integrated Security=false;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Add your connection string here");
         }
     }
 }

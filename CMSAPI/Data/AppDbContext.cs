@@ -9,11 +9,16 @@ namespace CMSAPI.Data
         {
         }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Customer>()
                 .HasIndex(c => c.Email)
-                .IsUnique();
+                .IsUnique();// Ensure Emails are unique
+
+            modelBuilder.Entity<User>()
+            .HasIndex(u => u.Username)
+            .IsUnique(); // Ensure usernames are unique
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

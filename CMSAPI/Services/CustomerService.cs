@@ -72,10 +72,6 @@ namespace CMSAPI.Services
             var customer = new Customer();
             try
             {
-                if (await IsEmailOrPhoneNumberTaken(customerDto.Email, customerDto.PhoneNumber))
-                {
-                    throw new InvalidOperationException("Email or phone number already in use.");
-                }
                 customer = await _appDbContext.Customers.FindAsync(customerId);
                 if (customer == null) return false;
 

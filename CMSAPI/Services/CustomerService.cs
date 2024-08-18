@@ -33,7 +33,6 @@ namespace CMSAPI.Services
             return result;
 
         }
-
         public async Task<CustomerDto> GetCustomerById(Guid customerId)
         {
             var customer = new Customer();
@@ -51,9 +50,13 @@ namespace CMSAPI.Services
         {
             var customer = new Customer();
             if (customerDto == null) throw new ArgumentNullException(nameof(customerDto));
-            try
+            if (await IsEmailOrPhoneNumberTaken(customerDto.Email, customerDto.PhoneNumber))
             {
-               customer = _mapper.Map<Customer>(customerDto);
+                throw new InvalidOperationException("Email or phone number already in use.");
+            }
+            try
+            {              
+                customer = _mapper.Map<Customer>(customerDto);
                 _appDbContext.Customers.Add(customer);
                 await _appDbContext.SaveChangesAsync();
             } 
@@ -69,6 +72,10 @@ namespace CMSAPI.Services
             var customer = new Customer();
             try
             {
+                if (await IsEmailOrPhoneNumberTaken(customerDto.Email, customerDto.PhoneNumber))
+                {
+                    throw new InvalidOperationException("Email or phone number already in use.");
+                }
                 customer = await _appDbContext.Customers.FindAsync(customerId);
                 if (customer == null) return false;
 
@@ -84,7 +91,12 @@ namespace CMSAPI.Services
 
             return true;
         }
-
+        private async Task<bool> IsEmailOrPhoneNumberTaken(string? email, string? phoneNumber, Guid? excludedCustomerId = null)
+        {
+            return await _appDbContext.Customers
+                .AnyAsync(c => (c.Email == email || c.PhoneNumber == phoneNumber) &&
+                               (excludedCustomerId == null || c.CustomerId != excludedCustomerId));
+        }
         public async Task<bool> DeleteCustomer(Guid customerId)
         {
             var customer = new Customer();

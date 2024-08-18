@@ -55,6 +55,10 @@ namespace CMSAPI.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult<int>> PostCustomer(CustomerDto customerDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             var customerId = await _customerService.CreateCustomer(customerDto);
             return CreatedAtAction(nameof(GetCustomer), new { id = customerId }, customerId);
         }
@@ -76,6 +80,10 @@ namespace CMSAPI.Controllers
             if (id != customerDto.CustomerId)
             {
                 return BadRequest();
+            }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
             }
             var result = await _customerService.UpdateCustomer(id,customerDto);
             if (!result)
